@@ -1,0 +1,3687 @@
+```html
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Bài toán Cái Túi 0/1 - Nhánh Cận
+    </title>
+
+    <style>
+        /* =====================================================
+   DARK MODE - BÀI TOÁN CÁI TÚI 0/1
+===================================================== */
+        
+         :root {
+            --bg: #080d18;
+            --bg-2: #0d1424;
+            --card: #111a2b;
+            --card-2: #162238;
+            --border: #263653;
+            --border-light: #344766;
+            --text: #7e91af;
+            --text-soft: #9eabc1;
+            --text-muted: #71809a;
+            --blue: #4f8cff;
+            --blue-light: #79a7ff;
+            --green: #28d17c;
+            --green-dark: #123c2b;
+            --red: #ff5c6c;
+            --red-dark: #421b24;
+            --yellow: #f5c451;
+            --yellow-dark: #40351b;
+            --purple: #a978ff;
+            --purple-dark: #2b1d4a;
+            --cyan: #38d9ff;
+            --shadow: 0 10px 35px rgba(0, 0, 0, 0.35);
+            --shadow-small: 0 5px 18px rgba(0, 0, 0, 0.25);
+        }
+        /* =====================================================
+   RESET
+===================================================== */
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+            background: radial-gradient( circle at top left, #14264a 0%, transparent 35%), radial-gradient( circle at bottom right, #20123d 0%, transparent 35%), var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        /* =====================================================
+   HEADER
+===================================================== */
+        
+        header {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient( 135deg, #101c36, #172b52 45%, #241344);
+            color: rgb(182, 140, 140);
+            text-align: center;
+            padding: 55px 20px;
+            border-bottom: 1px solid #2d4268;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, .35);
+        }
+        
+        header::before {
+            content: "";
+            position: absolute;
+            width: 280px;
+            height: 280px;
+            border-radius: 50%;
+            background: rgba(79, 140, 255, .15);
+            filter: blur(10px);
+            top: -130px;
+            left: -80px;
+        }
+        
+        header::after {
+            content: "";
+            position: absolute;
+            width: 320px;
+            height: 320px;
+            border-radius: 50%;
+            background: rgba(169, 120, 255, .12);
+            filter: blur(15px);
+            right: -100px;
+            bottom: -180px;
+        }
+        
+        header h1 {
+            position: relative;
+            z-index: 1;
+            font-size: clamp(28px, 5vw, 42px);
+            font-weight: 800;
+            letter-spacing: .5px;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            position: relative;
+            z-index: 1;
+            color: #b9c7df;
+            font-size: 17px;
+        }
+        /* =====================================================
+   CONTAINER
+===================================================== */
+        
+        .container {
+            width: min(94%, 1450px);
+            margin: 35px auto;
+        }
+        /* =====================================================
+   CARD
+===================================================== */
+        
+        .card {
+            background: linear-gradient( 145deg, rgba(17, 26, 43, .97), rgba(12, 20, 34, .97));
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 28px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(12px);
+            transition: .25s ease;
+        }
+        
+        .card:hover {
+            border-color: #38527c;
+            transform: translateY(-1px);
+        }
+        
+        .card h2 {
+            color: var(--blue-light);
+            font-size: 22px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card h2::before {
+            content: "";
+            width: 4px;
+            height: 25px;
+            border-radius: 5px;
+            background: linear-gradient( #4f8cff, #a978ff);
+        }
+        /* =====================================================
+   FORM
+===================================================== */
+        
+        .form-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        
+        .form-row label {
+            color: var(--text-soft);
+            font-weight: 600;
+        }
+        
+        input {
+            background: #0a1220;
+            color: var(--text);
+            border: 1px solid var(--border-light);
+            padding: 12px 14px;
+            border-radius: 10px;
+            font-size: 15px;
+            outline: none;
+            transition: .2s;
+        }
+        
+        input::placeholder {
+            color: #5d6c83;
+        }
+        
+        input:focus {
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px rgba(79, 140, 255, .12);
+        }
+        
+        #capacity {
+            width: 160px;
+        }
+        /* =====================================================
+   BUTTON
+===================================================== */
+        
+        button {
+            border: 1px solid transparent;
+            padding: 11px 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 700;
+            color: rgb(187, 153, 153);
+            transition: .2s ease;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .btn-add {
+            background: linear-gradient( 135deg, #2563eb, #4f8cff);
+            box-shadow: 0 5px 18px rgba(37, 99, 235, .25);
+        }
+        
+        .btn-solve {
+            background: linear-gradient( 135deg, #12995b, #28d17c);
+            box-shadow: 0 5px 18px rgba(40, 209, 124, .2);
+        }
+        
+        .btn-reset {
+            background: linear-gradient( 135deg, #c52f42, #ff5c6c);
+        }
+        
+        .btn-demo {
+            background: linear-gradient( 135deg, #7045d6, #a978ff);
+        }
+        /* =====================================================
+   TABLE
+===================================================== */
+        
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 700px;
+        }
+        
+        th {
+            background: #172641;
+            color: #bcd0ef;
+            padding: 14px;
+            border-bottom: 1px solid var(--border-light);
+            font-weight: 700;
+            white-space: nowrap;
+        }
+        
+        td {
+            padding: 13px;
+            text-align: center;
+            border-bottom: 1px solid #1d2a40;
+            color: #d9e2f1;
+        }
+        
+        tbody tr {
+            transition: .18s;
+        }
+        
+        tbody tr:hover {
+            background: rgba(79, 140, 255, .07);
+        }
+        
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+        /* =====================================================
+   SELECTED / CUT ROW
+===================================================== */
+        
+        .selected-row {
+            background: rgba(40, 209, 124, .10) !important;
+        }
+        
+        .selected-row td {
+            color: #b9f5d5;
+        }
+        
+        .cut-row {
+            background: rgba(255, 92, 108, .08) !important;
+        }
+        
+        .cut-row td {
+            color: #ffb4bd;
+        }
+        /* =====================================================
+   STATUS
+===================================================== */
+        
+        .status-selected {
+            color: var(--green);
+            font-weight: 700;
+        }
+        
+        .status-not-selected {
+            color: var(--text-muted);
+        }
+        
+        .status-cut {
+            color: var(--red);
+            font-weight: 800;
+        }
+        
+        .status-continue {
+            color: var(--blue-light);
+            font-weight: 700;
+        }
+        
+        .status-optimal {
+            color: var(--green);
+            font-weight: 800;
+        }
+        /* =====================================================
+   DELETE BUTTON
+===================================================== */
+        
+        .delete-btn {
+            background: rgba(255, 92, 108, .12);
+            color: #ff8290;
+            border: 1px solid rgba(255, 92, 108, .25);
+            padding: 7px 12px;
+        }
+        
+        .delete-btn:hover {
+            background: rgba(255, 92, 108, .22);
+        }
+        /* =====================================================
+   RESULT
+===================================================== */
+        
+        #resultBox {
+            display: none;
+            border: 1px solid rgba(40, 209, 124, .35);
+            background: linear-gradient( 145deg, #0e211a, #101d1a);
+        }
+        
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+        
+        .result-item {
+            background: linear-gradient( 145deg, #16251f, #101b18);
+            border: 1px solid rgba(40, 209, 124, .18);
+            padding: 22px;
+            border-radius: 14px;
+            text-align: center;
+            box-shadow: var(--shadow-small);
+        }
+        
+        .result-item strong {
+            display: block;
+            color: #8ea49b;
+            margin-bottom: 8px;
+        }
+        
+        .result-item .number {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--green);
+        }
+        
+        .optimal-list {
+            margin-top: 20px;
+            padding: 18px;
+            background: #0b1512;
+            border: 1px solid rgba(40, 209, 124, .2);
+            border-left: 4px solid var(--green);
+            border-radius: 10px;
+            color: #c9d9d0;
+        }
+        /* =====================================================
+   ALGORITHM STEPS
+===================================================== */
+        
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+        
+        .step {
+            background: linear-gradient( 145deg, #141f33, #101827);
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--blue);
+            border-radius: 12px;
+            padding: 20px;
+            transition: .2s;
+        }
+        
+        .step:hover {
+            border-color: #41618e;
+            transform: translateY(-3px);
+        }
+        
+        .step h3 {
+            margin-bottom: 9px;
+            color: #8eb6ff;
+        }
+        
+        .step p {
+            color: var(--text-soft);
+        }
+        /* =====================================================
+   TREE CONTAINER
+===================================================== */
+        
+        #treeContainer {
+            width: 100%;
+            overflow: auto;
+            background: radial-gradient( circle at center, #101d31, #080f1c);
+            border: 1px solid #263958;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: inset 0 0 50px rgba(0, 0, 0, .25);
+        }
+        /* =====================================================
+   TREE CANVAS
+===================================================== */
+        
+        #treeCanvas {
+            position: relative;
+            min-width: 1100px;
+            min-height: 650px;
+        }
+        
+        #treeSvg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        #treeNodes {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            min-height: 650px;
+            z-index: 2;
+        }
+        /* =====================================================
+   TREE NODE
+===================================================== */
+        
+        .tree-node {
+            position: absolute;
+            width: 155px;
+            min-height: 105px;
+            transform: translateX(-50%);
+            background: linear-gradient( 145deg, #17253b, #0e1829);
+            border: 2px solid var(--blue);
+            border-radius: 13px;
+            padding: 11px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, .4);
+        }
+        
+        .tree-node:hover {
+            transform: translateX(-50%) translateY(-3px);
+        }
+        
+        .tree-node.root {
+            border-color: var(--purple);
+            background: linear-gradient( 145deg, #251944, #151025);
+            box-shadow: 0 0 25px rgba(169, 120, 255, .18);
+        }
+        
+        .tree-node.cut {
+            border-color: var(--red);
+            background: linear-gradient( 145deg, #351923, #1c1016);
+            box-shadow: 0 0 20px rgba(255, 92, 108, .13);
+        }
+        
+        .tree-node.optimal {
+            border-color: var(--green);
+            background: linear-gradient( 145deg, #123425, #0d2118);
+            box-shadow: 0 0 25px rgba(40, 209, 124, .2);
+        }
+        
+        .tree-node .node-title {
+            color: #8eb6ff;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+        
+        .tree-node.root .node-title {
+            color: var(--purple);
+        }
+        
+        .tree-node.cut .node-title {
+            color: #ff8290;
+        }
+        
+        .tree-node.optimal .node-title {
+            color: var(--green);
+        }
+        
+        .tree-node .node-info {
+            color: #aebbd0;
+            font-size: 12px;
+            line-height: 1.55;
+        }
+        
+        .tree-node .node-status {
+            margin-top: 6px;
+            font-size: 11px;
+            font-weight: 800;
+        }
+        
+        .tree-node .node-status.cut {
+            color: var(--red);
+        }
+        
+        .tree-node .node-status.optimal {
+            color: var(--green);
+        }
+        /* =====================================================
+   EDGE LABEL
+===================================================== */
+        
+        .edge-label {
+            position: absolute;
+            font-size: 12px;
+            font-weight: 800;
+            background: #0c1525;
+            border: 1px solid #293b58;
+            padding: 3px 7px;
+            border-radius: 6px;
+            z-index: 3;
+        }
+        
+        .edge-label.choose {
+            color: var(--green);
+        }
+        
+        .edge-label.skip {
+            color: var(--yellow);
+        }
+        /* =====================================================
+   LEGEND
+===================================================== */
+        
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 22px;
+        }
+        
+        .legend-item {
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            background: #111a2b;
+        }
+        
+        .legend-root {
+            color: var(--purple);
+            border: 1px solid var(--purple);
+        }
+        
+        .legend-normal {
+            color: var(--blue-light);
+            border: 1px solid var(--blue);
+        }
+        
+        .legend-cut {
+            color: var(--red);
+            border: 1px solid var(--red);
+        }
+        
+        .legend-optimal {
+            color: var(--green);
+            border: 1px solid var(--green);
+        }
+        /* =====================================================
+   NOTE
+===================================================== */
+        
+        .note {
+            margin-top: 20px;
+            padding: 16px 18px;
+            background: #211b0d;
+            border: 1px solid rgba(245, 196, 81, .2);
+            border-left: 4px solid var(--yellow);
+            border-radius: 9px;
+            color: #d6cba9;
+        }
+        
+        .note strong {
+            color: var(--yellow);
+        }
+        /* =====================================================
+   EMPTY
+===================================================== */
+        
+        .empty {
+            text-align: center;
+            padding: 35px !important;
+            color: var(--text-muted);
+        }
+        /* =====================================================
+   FORM BUTTON GROUP
+===================================================== */
+        
+        .form-row button {
+            white-space: nowrap;
+        }
+        /* =====================================================
+   SCROLLBAR
+===================================================== */
+        
+         ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+        
+         ::-webkit-scrollbar-track {
+            background: #090f1b;
+        }
+        
+         ::-webkit-scrollbar-thumb {
+            background: #2c3f5e;
+            border-radius: 10px;
+        }
+        
+         ::-webkit-scrollbar-thumb:hover {
+            background: #41618e;
+        }
+        /* =====================================================
+   SELECTION
+===================================================== */
+        
+         ::selection {
+            background: rgba(79, 140, 255, .35);
+            color: white;
+        }
+        /* =====================================================
+   RESPONSIVE
+===================================================== */
+        
+        @media(max-width: 900px) {
+            .result-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .steps {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media(max-width: 650px) {
+            header {
+                padding: 40px 15px;
+            }
+            header h1 {
+                font-size: 27px;
+            }
+            .container {
+                width: 96%;
+                margin: 20px auto;
+            }
+            .card {
+                padding: 18px;
+                border-radius: 14px;
+            }
+            .form-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .form-row input,
+            .form-row button {
+                width: 100%;
+            }
+            .result-grid {
+                grid-template-columns: 1fr;
+            }
+            .card h2 {
+                font-size: 19px;
+            }
+        }
+        /* =========================================
+           RESET
+        ========================================= */
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #eef2f7;
+            color: #1f2937;
+            line-height: 1.6;
+        }
+        /* =========================================
+           HEADER
+        ========================================= */
+        
+        header {
+            background: linear-gradient( 135deg, #1d4ed8, #7c3aed);
+            color: white;
+            text-align: center;
+            padding: 35px 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        header h1 {
+            font-size: 34px;
+            margin-bottom: 8px;
+        }
+        
+        header p {
+            font-size: 17px;
+        }
+        /* =========================================
+           CONTAINER
+        ========================================= */
+        
+        .container {
+            width: 95%;
+            max-width: 1400px;
+            margin: 30px auto;
+        }
+        /* =========================================
+           CARD
+        ========================================= */
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        }
+        
+        .card h2 {
+            color: #1d4ed8;
+            margin-bottom: 18px;
+            font-size: 23px;
+        }
+        /* =========================================
+           FORM
+        ========================================= */
+        
+        .form-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        
+        .form-row label {
+            font-weight: bold;
+        }
+        
+        input {
+            padding: 11px 13px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 15px;
+            outline: none;
+        }
+        
+        input:focus {
+            border-color: #2563eb;
+        }
+        
+        #capacity {
+            width: 150px;
+        }
+        /* =========================================
+           BUTTON
+        ========================================= */
+        
+        button {
+            border: none;
+            padding: 11px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+        
+        button:hover {
+            transform: translateY(-1px);
+            opacity: 0.88;
+        }
+        
+        .btn-add {
+            background: #2563eb;
+            color: white;
+        }
+        
+        .btn-solve {
+            background: #16a34a;
+            color: white;
+        }
+        
+        .btn-reset {
+            background: #dc2626;
+            color: white;
+        }
+        
+        .btn-demo {
+            background: #7c3aed;
+            color: white;
+        }
+        
+        .delete-btn {
+            background: #ef4444;
+            color: white;
+            padding: 6px 10px;
+        }
+        /* =========================================
+           TABLE
+        ========================================= */
+        
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        
+        th {
+            background: #1d4ed8;
+            color: white;
+            padding: 13px;
+            border: 1px solid #dbeafe;
+        }
+        
+        td {
+            padding: 11px;
+            text-align: center;
+            border: 1px solid #e5e7eb;
+        }
+        
+        tbody tr:hover {
+            background: #f8fafc;
+        }
+        
+        .selected-row {
+            background: #dcfce7 !important;
+            font-weight: bold;
+        }
+        
+        .cut-row {
+            background: #fee2e2 !important;
+        }
+        /* =========================================
+           STATUS
+        ========================================= */
+        
+        .status-selected {
+            color: #15803d;
+            font-weight: bold;
+        }
+        
+        .status-not-selected {
+            color: #6b7280;
+        }
+        
+        .status-cut {
+            color: #dc2626;
+            font-weight: bold;
+        }
+        
+        .status-continue {
+            color: #2563eb;
+            font-weight: bold;
+        }
+        
+        .status-optimal {
+            color: #15803d;
+            font-weight: bold;
+        }
+        /* =========================================
+           RESULT
+        ========================================= */
+        
+        #resultBox {
+            display: none;
+            border-left: 6px solid #16a34a;
+            background: #ecfdf5;
+        }
+        
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .result-item {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+        }
+        
+        .result-item strong {
+            display: block;
+            color: #475569;
+            margin-bottom: 8px;
+        }
+        
+        .result-item .number {
+            font-size: 25px;
+            font-weight: bold;
+            color: #15803d;
+        }
+        
+        .optimal-list {
+            margin-top: 20px;
+            padding: 18px;
+            background: white;
+            border-radius: 10px;
+            border-left: 5px solid #16a34a;
+        }
+        /* =========================================
+           ALGORITHM EXPLANATION
+        ========================================= */
+        
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+        
+        .step {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 18px;
+            border-left: 5px solid #2563eb;
+        }
+        
+        .step h3 {
+            margin-bottom: 8px;
+            color: #1d4ed8;
+        }
+        /* =========================================
+           TREE
+        ========================================= */
+        
+        #treeContainer {
+            width: 100%;
+            overflow: auto;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 35px;
+            min-height: 300px;
+        }
+        
+        #treeCanvas {
+            position: relative;
+            min-width: 1100px;
+            min-height: 650px;
+        }
+        
+        #treeSvg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        
+        #treeNodes {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            min-height: 650px;
+        }
+        
+        .tree-node {
+            position: absolute;
+            width: 150px;
+            min-height: 100px;
+            transform: translateX(-50%);
+            background: white;
+            border: 3px solid #2563eb;
+            border-radius: 12px;
+            padding: 10px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+            z-index: 2;
+        }
+        
+        .tree-node.root {
+            border-color: #7c3aed;
+            background: #f5f3ff;
+        }
+        
+        .tree-node.cut {
+            border-color: #dc2626;
+            background: #fef2f2;
+        }
+        
+        .tree-node.optimal {
+            border-color: #16a34a;
+            background: #f0fdf4;
+        }
+        
+        .tree-node .node-title {
+            font-weight: bold;
+            color: #1d4ed8;
+            margin-bottom: 5px;
+        }
+        
+        .tree-node.cut .node-title {
+            color: #dc2626;
+        }
+        
+        .tree-node.optimal .node-title {
+            color: #15803d;
+        }
+        
+        .tree-node .node-info {
+            font-size: 12px;
+            line-height: 1.5;
+        }
+        
+        .tree-node .node-status {
+            margin-top: 5px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .tree-node .node-status.cut {
+            color: #dc2626;
+        }
+        
+        .tree-node .node-status.optimal {
+            color: #15803d;
+        }
+        
+        .edge-label {
+            position: absolute;
+            font-size: 12px;
+            font-weight: bold;
+            background: white;
+            padding: 2px 5px;
+            border-radius: 4px;
+            z-index: 3;
+        }
+        
+        .edge-label.choose {
+            color: #15803d;
+        }
+        
+        .edge-label.skip {
+            color: #ca8a04;
+        }
+        /* =========================================
+           LEGEND
+        ========================================= */
+        
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 25px;
+        }
+        
+        .legend-item {
+            padding: 8px 14px;
+            border-radius: 7px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+        
+        .legend-root {
+            background: #f5f3ff;
+            border: 2px solid #7c3aed;
+        }
+        
+        .legend-normal {
+            background: white;
+            border: 2px solid #2563eb;
+        }
+        
+        .legend-cut {
+            background: #fef2f2;
+            border: 2px solid #dc2626;
+        }
+        
+        .legend-optimal {
+            background: #f0fdf4;
+            border: 2px solid #16a34a;
+        }
+        /* =========================================
+           NOTE
+        ========================================= */
+        
+        .note {
+            margin-top: 20px;
+            padding: 15px;
+            background: #fff7ed;
+            border-left: 5px solid #f97316;
+            border-radius: 8px;
+        }
+        
+        .empty {
+            text-align: center;
+            padding: 30px;
+            color: #64748b;
+        }
+        /* =========================================
+           RESPONSIVE
+        ========================================= */
+        
+        @media(max-width: 900px) {
+            .result-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .steps {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media(max-width: 600px) {
+            header h1 {
+                font-size: 25px;
+            }
+            .container {
+                width: 98%;
+            }
+            .card {
+                padding: 16px;
+            }
+            .form-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            input,
+            button {
+                width: 100%;
+            }
+            .result-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+     HEADER
+===================================================== -->
+
+    <header>
+
+        <h1>
+            🎒 BÀI TOÁN CÁI TÚI 0/1
+        </h1>
+
+        <p>
+            Giải bằng thuật toán Nhánh Cận (Branch and Bound)
+        </p>
+
+    </header>
+
+
+    <div class="container">
+
+
+        <!-- =================================================
+         1. NHẬP DỮ LIỆU
+    ================================================== -->
+
+        <div class="card">
+
+            <h2>
+                1. Nhập dữ liệu bài toán
+            </h2>
+
+            <div class="form-row">
+
+                <label>
+                Sức chứa túi:
+            </label>
+
+                <input type="number" id="capacity" min="1" placeholder="Ví dụ: 10">
+
+                <button class="btn-demo" onclick="loadDemo()">
+
+                📋 Dữ liệu mẫu
+
+            </button>
+
+                <button class="btn-add" onclick="addItem()">
+
+                + Thêm đồ vật
+
+            </button>
+
+                <button class="btn-solve" onclick="solve()">
+
+                ▶ Bắt đầu giải
+
+            </button>
+
+                <button class="btn-reset" onclick="resetAll()">
+
+                ↻ Làm lại
+
+            </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+         2. BẢNG ĐỒ VẬT
+    ================================================== -->
+
+        <div class="card">
+
+            <h2>
+                2. Bảng danh sách đồ vật
+            </h2>
+
+            <div class="table-wrapper">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                STT
+                            </th>
+
+                            <th>
+                                Trọng lượng
+                            </th>
+
+                            <th>
+                                Giá trị
+                            </th>
+
+                            <th>
+                                Giá trị / Trọng lượng
+                            </th>
+
+                            <th>
+                                Trạng thái
+                            </th>
+
+                            <th>
+                                Thao tác
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="itemTable">
+
+                        <tr>
+
+                            <td colspan="6" class="empty">
+
+                                Chưa có đồ vật. Hãy thêm dữ liệu.
+
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+         3. GIẢI THÍCH THUẬT TOÁN
+    ================================================== -->
+
+        <div class="card">
+
+            <h2>
+                3. Các bước của thuật toán Nhánh Cận
+            </h2>
+
+            <div class="steps">
+
+                <div class="step">
+
+                    <h3>
+                        🌿 Bước 1: Phân nhánh
+                    </h3>
+
+                    <p>
+                        Với mỗi đồ vật, tạo hai khả năng:
+                        <strong>chọn</strong> hoặc
+                        <strong>không chọn</strong>.
+                    </p>
+
+                </div>
+
+
+                <div class="step">
+
+                    <h3>
+                        📐 Bước 2: Tính cận
+                    </h3>
+
+                    <p>
+                        Tính cận trên để ước lượng giá trị tốt nhất mà nhánh có thể đạt được.
+                    </p>
+
+                </div>
+
+
+                <div class="step">
+
+                    <h3>
+                        ✂️ Bước 3: Cắt nhánh
+                    </h3>
+
+                    <p>
+                        Nếu cận trên không vượt nghiệm tốt nhất hiện tại, nhánh sẽ bị loại bỏ.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+         4. QUÁ TRÌNH GIẢI
+    ================================================== -->
+
+        <div class="card">
+
+            <h2>
+                4. Bảng quá trình giải
+            </h2>
+
+            <div class="table-wrapper">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Bước
+                            </th>
+
+                            <th>
+                                Đồ vật
+                            </th>
+
+                            <th>
+                                Quyết định
+                            </th>
+
+                            <th>
+                                Trọng lượng
+                            </th>
+
+                            <th>
+                                Giá trị
+                            </th>
+
+                            <th>
+                                Cận trên
+                            </th>
+
+                            <th>
+                                Nghiệm tốt nhất
+                            </th>
+
+                            <th>
+                                Hành động
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="processTable">
+
+                        <tr>
+
+                            <td colspan="8" class="empty">
+
+                                Chưa có quá trình. Hãy bấm "Bắt đầu giải".
+
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+         5. SƠ ĐỒ CÂY
+    ================================================== -->
+
+        <div class="card">
+
+            <h2>
+                5. Sơ đồ cây Nhánh Cận
+            </h2>
+
+            <p style="margin-bottom:15px;">
+
+                Mỗi nút biểu diễn một trạng thái.
+                <strong>W</strong> là trọng lượng,
+                <strong>V</strong> là giá trị,
+                <strong>UB</strong> là cận trên.
+
+            </p>
+
+
+            <div id="treeContainer">
+
+                <div id="treeCanvas">
+
+                    <svg id="treeSvg">
+                </svg>
+
+                    <div id="treeNodes">
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="legend">
+
+                <div class="legend-item legend-root">
+
+                    🟣 Bắt đầu
+
+                </div>
+
+                <div class="legend-item legend-normal">
+
+                    🔵 Nhánh đang xét
+
+                </div>
+
+                <div class="legend-item legend-cut">
+
+                    🔴 Nhánh bị cắt
+
+                </div>
+
+                <div class="legend-item legend-optimal">
+
+                    🟢 Nghiệm tối ưu
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+         6. KẾT QUẢ
+    ================================================== -->
+
+        <div class="card" id="resultBox">
+
+            <h2>
+                6. Kết quả tối ưu
+            </h2>
+
+            <div class="result-grid" id="resultGrid">
+            </div>
+
+
+            <div class="optimal-list">
+
+                <strong>
+                🎯 Phương án tối ưu:
+            </strong>
+
+                <span id="selectedItems">
+            </span>
+
+            </div>
+
+
+            <div class="note">
+
+                <strong>
+                Giải thích:
+            </strong> Thuật toán đã tìm được phương án có tổng giá trị lớn nhất nhưng tổng trọng lượng không vượt quá sức chứa của túi.
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+         7. CÔNG THỨC
+    ================================================== -->
+
+        <div class="card">
+
+            <h2>
+                7. Mô hình toán học
+            </h2>
+
+            <p>
+                <strong>Biến quyết định:</strong> xi ∈ {0, 1}
+            </p>
+
+            <p>
+                <strong>Hàm mục tiêu:</strong> Max Σ(vi × xi)
+            </p>
+
+            <p>
+                <strong>Ràng buộc:</strong> Σ(wi × xi) ≤ W
+            </p>
+
+            <div class="note">
+
+                Trong đó:
+
+                <br><br>
+
+                <strong>xi</strong>: quyết định có chọn đồ vật i hay không.
+
+                <br>
+
+                <strong>wi</strong>: trọng lượng của đồ vật i.
+
+                <br>
+
+                <strong>vi</strong>: giá trị của đồ vật i.
+
+                <br>
+
+                <strong>W</strong>: sức chứa tối đa của túi.
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <script>
+        /* =====================================================
+                                   BIẾN TOÀN CỤC
+                                ===================================================== */
+
+        let items = [];
+
+        let processStep = 0;
+
+        let treeNodes = [];
+
+        let treeEdges = [];
+
+        let nodeId = 0;
+
+
+        /* =====================================================
+           THÊM ĐỒ VẬT
+        ===================================================== */
+
+        function addItem() {
+
+            const weight =
+                prompt(
+                    "Nhập trọng lượng của đồ vật:"
+                );
+
+
+            const value =
+                prompt(
+                    "Nhập giá trị của đồ vật:"
+                );
+
+
+            if (
+                weight === null ||
+                value === null
+            ) {
+
+                return;
+
+            }
+
+
+            const w =
+                Number(weight);
+
+
+            const v =
+                Number(value);
+
+
+            if (
+                isNaN(w) ||
+                isNaN(v) ||
+                w <= 0 ||
+                v < 0
+            ) {
+
+                alert(
+                    "Vui lòng nhập dữ liệu hợp lệ!"
+                );
+
+                return;
+
+            }
+
+
+            items.push({
+
+                id: items.length + 1,
+
+                weight: w,
+
+                value: v,
+
+                ratio: v / w
+
+            });
+
+
+            displayItems();
+
+        }
+
+
+        /* =====================================================
+           DỮ LIỆU MẪU
+        ===================================================== */
+
+        function loadDemo() {
+
+            items = [
+
+                {
+                    id: 1,
+                    weight: 2,
+                    value: 40,
+                    ratio: 20
+                },
+
+                {
+                    id: 2,
+                    weight: 3,
+                    value: 50,
+                    ratio: 50 / 3
+                },
+
+                {
+                    id: 3,
+                    weight: 5,
+                    value: 70,
+                    ratio: 14
+                },
+
+                {
+                    id: 4,
+                    weight: 6,
+                    value: 80,
+                    ratio: 80 / 6
+                }
+
+            ];
+
+
+            document.getElementById(
+                "capacity"
+            ).value = 10;
+
+
+            displayItems();
+
+        }
+
+
+        /* =====================================================
+           HIỂN THỊ BẢNG ĐỒ VẬT
+        ===================================================== */
+
+        function displayItems(
+            selectedIndexes = []
+        ) {
+
+            const table =
+                document.getElementById(
+                    "itemTable"
+                );
+
+
+            table.innerHTML = "";
+
+
+            if (
+                items.length === 0
+            ) {
+
+                table.innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="6"
+                    class="empty">
+
+                    Chưa có đồ vật.
+                    Hãy thêm dữ liệu.
+
+                </td>
+
+            </tr>
+
+        `;
+
+                return;
+
+            }
+
+
+            items.forEach(
+                (item, index) => {
+
+                    const tr =
+                        document.createElement(
+                            "tr"
+                        );
+
+
+                    if (
+                        selectedIndexes.includes(
+                            index
+                        )
+                    ) {
+
+                        tr.classList.add(
+                            "selected-row"
+                        );
+
+                    }
+
+
+                    const status =
+                        selectedIndexes.includes(
+                            index
+                        )
+
+                    ?
+
+                    `<span class="status-selected">
+                    ✓ Được chọn
+                 </span>`
+
+                    :
+
+                    `<span class="status-not-selected">
+                    Không chọn
+                 </span>`;
+
+
+                    tr.innerHTML = `
+
+                <td>
+                    ${index + 1}
+                </td>
+
+                <td>
+                    ${item.weight}
+                </td>
+
+                <td>
+                    ${item.value}
+                </td>
+
+                <td>
+                    ${item.ratio.toFixed(2)}
+                </td>
+
+                <td>
+                    ${status}
+                </td>
+
+                <td>
+
+                    <button
+                        class="delete-btn"
+                        onclick="deleteItem(${index})">
+
+                        Xóa
+
+                    </button>
+
+                </td>
+
+            `;
+
+
+                    table.appendChild(
+                        tr
+                    );
+
+                }
+            );
+
+        }
+
+
+        /* =====================================================
+           XÓA ĐỒ VẬT
+        ===================================================== */
+
+        function deleteItem(index) {
+
+            items.splice(
+                index,
+                1
+            );
+
+
+            items.forEach(
+                (item, i) => {
+
+                    item.id =
+                        i + 1;
+
+                }
+            );
+
+
+            displayItems();
+
+        }
+
+
+        /* =====================================================
+           TÍNH CẬN TRÊN
+        ===================================================== */
+
+        function calculateBound(
+
+            level,
+
+            currentWeight,
+
+            currentValue,
+
+            capacity,
+
+            sortedItems
+
+        ) {
+
+            if (
+                currentWeight >
+                capacity
+            ) {
+
+                return 0;
+
+            }
+
+
+            let totalWeight =
+                currentWeight;
+
+
+            let upperBound =
+                currentValue;
+
+
+            let i =
+                level;
+
+
+            /*
+                Lấy toàn bộ đồ vật
+                nếu còn đủ sức chứa.
+            */
+
+            while (
+
+                i <
+                sortedItems.length &&
+
+                totalWeight +
+                sortedItems[i].weight <=
+                capacity
+
+            ) {
+
+                totalWeight +=
+                    sortedItems[i].weight;
+
+
+                upperBound +=
+                    sortedItems[i].value;
+
+
+                i++;
+
+            }
+
+
+            /*
+                Nếu còn chỗ,
+                lấy một phần đồ vật tiếp theo
+                để tính cận trên.
+            */
+
+            if (
+                i <
+                sortedItems.length
+            ) {
+
+                const remaining =
+                    capacity -
+                    totalWeight;
+
+
+                upperBound +=
+
+                    remaining *
+                    sortedItems[i].ratio;
+
+            }
+
+
+            return upperBound;
+
+        }
+
+
+        /* =====================================================
+           TẠO NODE CÂY
+        ===================================================== */
+
+        function createNode(
+
+            level,
+
+            decision,
+
+            weight,
+
+            value,
+
+            bound,
+
+            status,
+
+            parentId,
+
+            itemId
+
+        ) {
+
+            const id =
+                nodeId++;
+
+
+            const node = {
+
+                id: id,
+
+                level: level,
+
+                decision: decision,
+
+                weight: weight,
+
+                value: value,
+
+                bound: bound,
+
+                status: status,
+
+                parentId: parentId,
+
+                itemId: itemId
+
+            };
+
+
+            treeNodes.push(
+                node
+            );
+
+
+            if (
+                parentId !== null
+            ) {
+
+                treeEdges.push({
+
+                    parent: parentId,
+
+                    child: id,
+
+                    decision: decision
+
+                });
+
+            }
+
+
+            return id;
+
+        }
+
+
+        /* =====================================================
+           THÊM BẢNG QUÁ TRÌNH
+        ===================================================== */
+
+        function addProcess(
+
+            itemId,
+
+            decision,
+
+            weight,
+
+            value,
+
+            bound,
+
+            bestValue,
+
+            action
+
+        ) {
+
+            processStep++;
+
+
+            const table =
+                document.getElementById(
+                    "processTable"
+                );
+
+
+            /*
+                Xóa dòng "chưa có quá trình"
+            */
+
+            if (
+                processStep === 1
+            ) {
+
+                table.innerHTML = "";
+
+            }
+
+
+            const tr =
+                document.createElement(
+                    "tr"
+                );
+
+
+            let decisionHTML;
+
+
+            if (
+                decision === "Chọn"
+            ) {
+
+                decisionHTML =
+
+                    `<span class="status-selected">
+                ✓ Chọn
+             </span>`;
+
+            } else {
+
+                decisionHTML =
+
+                    `<span>
+                ✕ Không chọn
+             </span>`;
+
+            }
+
+
+            let actionHTML;
+
+
+            if (
+                action === "CẮT NHÁNH"
+            ) {
+
+                actionHTML =
+
+                    `<span class="status-cut">
+                ✂ CẮT NHÁNH
+             </span>`;
+
+                tr.classList.add(
+                    "cut-row"
+                );
+
+            } else if (
+                action === "TỐI ƯU"
+            ) {
+
+                actionHTML =
+
+                    `<span class="status-optimal">
+                ★ NGHIỆM TỐI ƯU
+             </span>`;
+
+            } else {
+
+                actionHTML =
+
+                    `<span class="status-continue">
+                → Tiếp tục
+             </span>`;
+
+            }
+
+
+            tr.innerHTML = `
+
+        <td>
+            ${processStep}
+        </td>
+
+        <td>
+            Đồ ${itemId}
+        </td>
+
+        <td>
+            ${decisionHTML}
+        </td>
+
+        <td>
+            ${weight}
+        </td>
+
+        <td>
+            ${value}
+        </td>
+
+        <td>
+            ${bound.toFixed(2)}
+        </td>
+
+        <td>
+            ${bestValue}
+        </td>
+
+        <td>
+            ${actionHTML}
+        </td>
+
+    `;
+
+
+            table.appendChild(
+                tr
+            );
+
+        }
+
+
+        /* =====================================================
+           THUẬT TOÁN NHÁNH CẬN
+        ===================================================== */
+
+        function branchAndBound(
+
+            level,
+
+            currentWeight,
+
+            currentValue,
+
+            capacity,
+
+            sortedItems,
+
+            state,
+
+            result,
+
+            parentId
+
+        ) {
+
+
+            /*
+                Nếu vượt sức chứa
+            */
+
+            if (
+                currentWeight >
+                capacity
+            ) {
+
+                return;
+
+            }
+
+
+            /*
+                Nếu đã xét hết đồ vật
+            */
+
+            if (
+                level ===
+                sortedItems.length
+            ) {
+
+
+                if (
+                    currentValue >
+                    result.bestValue
+                ) {
+
+
+                    result.bestValue =
+                        currentValue;
+
+
+                    result.bestWeight =
+                        currentWeight;
+
+
+                    result.bestState = [...state];
+
+
+                    /*
+                        Tìm node cuối
+                        và đánh dấu tối ưu
+                    */
+
+                    const lastNode =
+                        treeNodes
+                        .filter(
+                            n =>
+                            n.level ===
+                            level &&
+                            n.parentId ===
+                            parentId
+                        )
+                        .pop();
+
+
+                    if (
+                        lastNode
+                    ) {
+
+                        lastNode.status =
+                            "optimal";
+
+                    }
+
+                }
+
+
+                return;
+
+            }
+
+
+            /*
+                Tính cận tại nút hiện tại
+            */
+
+            const currentBound =
+                calculateBound(
+
+                    level,
+
+                    currentWeight,
+
+                    currentValue,
+
+                    capacity,
+
+                    sortedItems
+
+                );
+
+
+            /*
+                Nếu cận không tốt hơn
+                nghiệm hiện tại → cắt
+            */
+
+            if (
+                currentBound <=
+                result.bestValue
+            ) {
+
+                return;
+
+            }
+
+
+            /*
+                =========================================
+                NHÁNH 1: CHỌN ĐỒ VẬT
+                =========================================
+            */
+
+            if (
+
+                currentWeight +
+                sortedItems[level].weight <=
+                capacity
+
+            ) {
+
+
+                state[level] =
+                    1;
+
+
+                const newWeight =
+
+                    currentWeight +
+                    sortedItems[level].weight;
+
+
+                const newValue =
+
+                    currentValue +
+                    sortedItems[level].value;
+
+
+                const newBound =
+
+                    calculateBound(
+
+                        level + 1,
+
+                        newWeight,
+
+                        newValue,
+
+                        capacity,
+
+                        sortedItems
+
+                    );
+
+
+                let status =
+                    "normal";
+
+
+                if (
+                    newBound <=
+                    result.bestValue
+                ) {
+
+                    status =
+                        "cut";
+
+                }
+
+
+                const childId =
+
+                    createNode(
+
+                        level + 1,
+
+                        "Chọn",
+
+                        newWeight,
+
+                        newValue,
+
+                        newBound,
+
+                        status,
+
+                        parentId,
+
+                        sortedItems[level].id
+
+                    );
+
+
+                addProcess(
+
+                    sortedItems[level].id,
+
+                    "Chọn",
+
+                    newWeight,
+
+                    newValue,
+
+                    newBound,
+
+                    result.bestValue,
+
+                    status === "cut" ?
+                    "CẮT NHÁNH" :
+                    "Tiếp tục"
+
+                );
+
+
+                /*
+                    Nếu không bị cắt
+                    thì tiếp tục đệ quy
+                */
+
+                if (
+                    status !== "cut"
+                ) {
+
+                    branchAndBound(
+
+                        level + 1,
+
+                        newWeight,
+
+                        newValue,
+
+                        capacity,
+
+                        sortedItems,
+
+                        state,
+
+                        result,
+
+                        childId
+
+                    );
+
+                }
+
+            }
+
+
+            /*
+                =========================================
+                NHÁNH 2: KHÔNG CHỌN
+                =========================================
+            */
+
+            state[level] =
+                0;
+
+
+            const skipWeight =
+                currentWeight;
+
+
+            const skipValue =
+                currentValue;
+
+
+            const skipBound =
+
+                calculateBound(
+
+                    level + 1,
+
+                    skipWeight,
+
+                    skipValue,
+
+                    capacity,
+
+                    sortedItems
+
+                );
+
+
+            let skipStatus =
+                "normal";
+
+
+            if (
+                skipBound <=
+                result.bestValue
+            ) {
+
+                skipStatus =
+                    "cut";
+
+            }
+
+
+            const skipNodeId =
+
+                createNode(
+
+                    level + 1,
+
+                    "Không chọn",
+
+                    skipWeight,
+
+                    skipValue,
+
+                    skipBound,
+
+                    skipStatus,
+
+                    parentId,
+
+                    sortedItems[level].id
+
+                );
+
+
+            addProcess(
+
+                sortedItems[level].id,
+
+                "Không chọn",
+
+                skipWeight,
+
+                skipValue,
+
+                skipBound,
+
+                result.bestValue,
+
+                skipStatus === "cut" ?
+                "CẮT NHÁNH" :
+                "Tiếp tục"
+
+            );
+
+
+            if (
+                skipStatus !== "cut"
+            ) {
+
+                branchAndBound(
+
+                    level + 1,
+
+                    skipWeight,
+
+                    skipValue,
+
+                    capacity,
+
+                    sortedItems,
+
+                    state,
+
+                    result,
+
+                    skipNodeId
+
+                );
+
+            }
+
+        }
+
+
+        /* =====================================================
+           ĐÁNH DẤU NGHIỆM TỐI ƯU
+        ===================================================== */
+
+        function markOptimalPath(
+            bestState
+        ) {
+
+            /*
+                Tìm đường đi tương ứng
+                với nghiệm tốt nhất.
+
+                Vì cây được tạo theo thứ tự
+                nên ta đánh dấu các node
+                có trạng thái tương ứng.
+            */
+
+            let currentParent =
+                null;
+
+
+            for (
+                let level = 0; level < bestState.length; level++
+            ) {
+
+                const decision =
+                    bestState[level] === 1 ?
+                    "Chọn" :
+                    "Không chọn";
+
+
+                const candidates =
+                    treeNodes.filter(
+                        node =>
+
+                        node.level ===
+                        level + 1 &&
+
+                        node.parentId ===
+                        currentParent &&
+
+                        node.decision ===
+                        decision
+                    );
+
+
+                if (
+                    candidates.length > 0
+                ) {
+
+                    const node =
+                        candidates[0];
+
+
+                    currentParent =
+                        node.id;
+
+
+                    /*
+                        Không đổi trạng thái cắt.
+                        Chỉ đánh dấu node tối ưu.
+                    */
+
+                    if (
+                        level ===
+                        bestState.length - 1
+                    ) {
+
+                        node.status =
+                            "optimal";
+
+                    }
+
+                }
+
+            }
+
+        }
+
+
+        /* =====================================================
+           VẼ SƠ ĐỒ CÂY
+        ===================================================== */
+
+        function drawTree() {
+
+            const nodesContainer =
+                document.getElementById(
+                    "treeNodes"
+                );
+
+
+            const svg =
+                document.getElementById(
+                    "treeSvg"
+                );
+
+
+            nodesContainer.innerHTML =
+                "";
+
+
+            svg.innerHTML =
+                "";
+
+
+            if (
+                treeNodes.length === 0
+            ) {
+
+                return;
+
+            }
+
+
+            /*
+                Nhóm node theo level
+            */
+
+            const levels = {};
+
+
+            treeNodes.forEach(
+                node => {
+
+                    if (!levels[node.level]) {
+
+                        levels[node.level] = [];
+
+                    }
+
+
+                    levels[node.level].push(
+                        node
+                    );
+
+                }
+            );
+
+
+            const levelHeight =
+                145;
+
+
+            const maxLevel =
+                Math.max(
+                    ...treeNodes.map(
+                        n => n.level
+                    )
+                );
+
+
+            /*
+                Tính số node lớn nhất
+                để xác định chiều rộng
+            */
+
+            let maxNodes =
+                1;
+
+
+            Object.values(
+                levels
+            ).forEach(
+                arr => {
+
+                    maxNodes =
+                        Math.max(
+                            maxNodes,
+                            arr.length
+                        );
+
+                }
+            );
+
+
+            const nodeWidth =
+                180;
+
+
+            const horizontalGap =
+                25;
+
+
+            const canvasWidth =
+
+                Math.max(
+
+                    1100,
+
+                    maxNodes *
+                    (nodeWidth +
+                        horizontalGap)
+
+                );
+
+
+            const canvasHeight =
+
+                Math.max(
+
+                    650,
+
+                    (maxLevel + 1) *
+                    levelHeight +
+                    100
+
+                );
+
+
+            const canvas =
+                document.getElementById(
+                    "treeCanvas"
+                );
+
+
+            canvas.style.width =
+                canvasWidth + "px";
+
+
+            canvas.style.height =
+                canvasHeight + "px";
+
+
+            nodesContainer.style.width =
+                canvasWidth + "px";
+
+
+            nodesContainer.style.height =
+                canvasHeight + "px";
+
+
+            svg.setAttribute(
+                "width",
+                canvasWidth
+            );
+
+
+            svg.setAttribute(
+                "height",
+                canvasHeight
+            );
+
+
+            svg.setAttribute(
+                "viewBox",
+                `0 0 ${canvasWidth} ${canvasHeight}`
+            );
+
+
+            /*
+                Tính vị trí node
+            */
+
+            const positions = {};
+
+
+            Object.keys(
+                levels
+            ).forEach(
+                level => {
+
+                    const arr =
+                        levels[level];
+
+
+                    const count =
+                        arr.length;
+
+
+                    const spacing =
+                        canvasWidth /
+                        (count + 1);
+
+
+                    arr.forEach(
+                        (node, index) => {
+
+                            const x =
+                                spacing *
+                                (index + 1);
+
+
+                            const y =
+                                30 +
+                                Number(level) *
+                                levelHeight;
+
+
+                            positions[node.id] = {
+
+                                x: x,
+
+                                y: y
+
+                            };
+
+                        }
+                    );
+
+                }
+            );
+
+
+            /*
+                Vẽ đường nối trước
+            */
+
+            treeEdges.forEach(
+                edge => {
+
+                    const parent =
+                        positions[
+                            edge.parent
+                        ];
+
+
+                    const child =
+                        positions[
+                            edge.child
+                        ];
+
+
+                    if (!parent ||
+                        !child
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    const line =
+                        document.createElementNS(
+                            "http://www.w3.org/2000/svg",
+                            "line"
+                        );
+
+
+                    line.setAttribute(
+                        "x1",
+                        parent.x
+                    );
+
+
+                    line.setAttribute(
+                        "y1",
+                        parent.y + 100
+                    );
+
+
+                    line.setAttribute(
+                        "x2",
+                        child.x
+                    );
+
+
+                    line.setAttribute(
+                        "y2",
+                        child.y
+                    );
+
+
+                    line.setAttribute(
+                        "stroke",
+                        edge.decision ===
+                        "Chọn" ?
+                        "#16a34a" :
+                        "#ca8a04"
+                    );
+
+
+                    line.setAttribute(
+                        "stroke-width",
+                        "2"
+                    );
+
+
+                    svg.appendChild(
+                        line
+                    );
+
+
+                    /*
+                        Nhãn CHỌN / KHÔNG CHỌN
+                    */
+
+                    const label =
+                        document.createElement(
+                            "div"
+                        );
+
+
+                    label.className =
+                        "edge-label";
+
+
+                    label.classList.add(
+
+                        edge.decision ===
+                        "Chọn"
+
+                        ?
+                        "choose"
+
+                        :
+                        "skip"
+
+                    );
+
+
+                    label.innerText =
+
+                        edge.decision ===
+                        "Chọn"
+
+                    ?
+                    "✓ Chọn"
+
+                    :
+                    "✕ Không chọn";
+
+
+                    const midX =
+                        (parent.x +
+                            child.x) / 2;
+
+
+                    const midY =
+                        (parent.y +
+                            child.y) / 2;
+
+
+                    label.style.left =
+                        midX + "px";
+
+
+                    label.style.top =
+                        (midY - 15) + "px";
+
+
+                    nodesContainer.appendChild(
+                        label
+                    );
+
+                }
+            );
+
+
+            /*
+                Vẽ node
+            */
+
+            treeNodes.forEach(
+                node => {
+
+                    const pos =
+                        positions[node.id];
+
+
+                    const div =
+                        document.createElement(
+                            "div"
+                        );
+
+
+                    div.className =
+                        "tree-node";
+
+
+                    if (
+                        node.level === 0
+                    ) {
+
+                        div.classList.add(
+                            "root"
+                        );
+
+                    }
+
+
+                    if (
+                        node.status === "cut"
+                    ) {
+
+                        div.classList.add(
+                            "cut"
+                        );
+
+                    }
+
+
+                    if (
+                        node.status === "optimal"
+                    ) {
+
+                        div.classList.add(
+                            "optimal"
+                        );
+
+                    }
+
+
+                    let title;
+
+
+                    if (
+                        node.level === 0
+                    ) {
+
+                        title =
+                            "BẮT ĐẦU";
+
+                    } else {
+
+                        title =
+                            "ĐỒ " +
+                            node.itemId;
+
+                    }
+
+
+                    let statusText;
+
+
+                    if (
+                        node.status ===
+                        "cut"
+                    ) {
+
+                        statusText =
+                            "✂ CẮT NHÁNH";
+
+                    } else if (
+                        node.status ===
+                        "optimal"
+                    ) {
+
+                        statusText =
+                            "★ TỐI ƯU";
+
+                    } else {
+
+                        statusText =
+                            "→ TIẾP TỤC";
+
+                    }
+
+
+                    div.innerHTML = `
+
+                <div
+                    class="node-title">
+
+                    ${title}
+
+                </div>
+
+
+                <div
+                    class="node-info">
+
+                    W = ${node.weight}
+
+                    <br>
+
+                    V = ${node.value}
+
+                    <br>
+
+                    UB =
+                    ${node.bound.toFixed(2)}
+
+                </div>
+
+
+                <div
+                    class="node-status
+                    ${node.status}">
+
+                    ${statusText}
+
+                </div>
+
+            `;
+
+
+                    div.style.left =
+                        pos.x + "px";
+
+
+                    div.style.top =
+                        pos.y + "px";
+
+
+                    nodesContainer.appendChild(
+                        div
+                    );
+
+                }
+            );
+
+        }
+
+
+        /* =====================================================
+           GIẢI BÀI TOÁN
+        ===================================================== */
+
+        function solve() {
+
+            const capacity =
+                Number(
+                    document.getElementById(
+                        "capacity"
+                    ).value
+                );
+
+
+            /*
+                Kiểm tra sức chứa
+            */
+
+            if (
+                isNaN(capacity) ||
+                capacity <= 0
+            ) {
+
+                alert(
+                    "Vui lòng nhập sức chứa hợp lệ!"
+                );
+
+                return;
+
+            }
+
+
+            /*
+                Kiểm tra đồ vật
+            */
+
+            if (
+                items.length === 0
+            ) {
+
+                alert(
+                    "Vui lòng thêm ít nhất một đồ vật!"
+                );
+
+                return;
+
+            }
+
+
+            /*
+                Xóa dữ liệu cũ
+            */
+
+            processStep =
+                0;
+
+
+            treeNodes = [];
+
+
+            treeEdges = [];
+
+
+            nodeId =
+                0;
+
+
+            document.getElementById(
+                    "processTable"
+                ).innerHTML =
+                "";
+
+
+            /*
+                Sắp xếp theo tỷ lệ
+                giá trị / trọng lượng
+                giảm dần.
+            */
+
+            const sortedItems =
+
+                [...items].sort(
+
+                    (a, b) =>
+
+                    b.ratio -
+                    a.ratio
+
+                );
+
+
+            /*
+                Kết quả
+            */
+
+            const result = {
+
+                bestValue: 0,
+
+                bestWeight: 0,
+
+                bestState: new Array(
+                    sortedItems.length
+                ).fill(0)
+
+            };
+
+
+            /*
+                Tạo node gốc
+            */
+
+            const rootBound =
+
+                calculateBound(
+
+                    0,
+
+                    0,
+
+                    0,
+
+                    capacity,
+
+                    sortedItems
+
+                );
+
+
+            const rootId =
+
+                createNode(
+
+                    0,
+
+                    "Bắt đầu",
+
+                    0,
+
+                    0,
+
+                    rootBound,
+
+                    "normal",
+
+                    null,
+
+                    null
+
+                );
+
+
+            /*
+                Chạy thuật toán
+            */
+
+            const state =
+
+                new Array(
+                    sortedItems.length
+                ).fill(0);
+
+
+            /*
+                Tạo hai nhánh từ gốc.
+                Hàm chính bắt đầu tại level 0.
+            */
+
+            branchAndBound(
+
+                0,
+
+                0,
+
+                0,
+
+                capacity,
+
+                sortedItems,
+
+                state,
+
+                result,
+
+                rootId
+
+            );
+
+
+            /*
+                Đánh dấu đường tối ưu
+            */
+
+            markOptimalPath(
+                result.bestState
+            );
+
+
+            /*
+                Tìm các đồ vật được chọn
+            */
+
+            const selectedIndexes = [];
+
+
+            const selectedNames = [];
+
+
+            sortedItems.forEach(
+
+                (item, sortedIndex) => {
+
+
+                    if (
+                        result.bestState[
+                            sortedIndex
+                        ] === 1
+                    ) {
+
+
+                        const originalIndex =
+                            items.indexOf(
+                                item
+                            );
+
+
+                        selectedIndexes.push(
+                            originalIndex
+                        );
+
+
+                        selectedNames.push(
+
+                            "Đồ " +
+                            item.id
+
+                        );
+
+                    }
+
+                }
+
+            );
+
+
+            /*
+                Hiển thị bảng
+            */
+
+            displayItems(
+                selectedIndexes
+            );
+
+
+            /*
+                Hiển thị kết quả
+            */
+
+            const resultBox =
+                document.getElementById(
+                    "resultBox"
+                );
+
+
+            const resultGrid =
+                document.getElementById(
+                    "resultGrid"
+                );
+
+
+            resultGrid.innerHTML = `
+
+        <div class="result-item">
+
+            <strong>
+                🎯 Giá trị lớn nhất
+            </strong>
+
+            <div class="number">
+                ${result.bestValue}
+            </div>
+
+        </div>
+
+
+        <div class="result-item">
+
+            <strong>
+                ⚖️ Tổng trọng lượng
+            </strong>
+
+            <div class="number">
+                ${result.bestWeight}
+            </div>
+
+        </div>
+
+
+        <div class="result-item">
+
+            <strong>
+                🎒 Sức chứa
+            </strong>
+
+            <div class="number">
+                ${capacity}
+            </div>
+
+        </div>
+
+
+        <div class="result-item">
+
+            <strong>
+                📦 Số đồ được chọn
+            </strong>
+
+            <div class="number">
+                ${selectedIndexes.length}
+            </div>
+
+        </div>
+
+    `;
+
+
+            document.getElementById(
+                    "selectedItems"
+                ).innerHTML =
+
+                selectedNames.length > 0
+
+                ?
+                selectedNames.join(
+                    " + "
+                )
+
+            : "Không chọn đồ vật nào";
+
+
+            resultBox.style.display =
+                "block";
+
+
+            /*
+                Vẽ sơ đồ cây
+            */
+
+            drawTree();
+
+
+            /*
+                Cuộn xuống kết quả
+            */
+
+            resultBox.scrollIntoView({
+
+                behavior: "smooth",
+
+                block: "start"
+
+            });
+
+        }
+
+
+        /* =====================================================
+           RESET
+        ===================================================== */
+
+        function resetAll() {
+
+            items = [];
+
+            processStep =
+                0;
+
+            treeNodes = [];
+
+            treeEdges = [];
+
+            nodeId =
+                0;
+
+
+            document.getElementById(
+                    "capacity"
+                ).value =
+                "";
+
+
+            document.getElementById(
+                "itemTable"
+            ).innerHTML = `
+
+        <tr>
+
+            <td
+                colspan="6"
+                class="empty">
+
+                Chưa có đồ vật.
+                Hãy thêm dữ liệu.
+
+            </td>
+
+        </tr>
+
+    `;
+
+
+            document.getElementById(
+                "processTable"
+            ).innerHTML = `
+
+        <tr>
+
+            <td
+                colspan="8"
+                class="empty">
+
+                Chưa có quá trình.
+                Hãy bấm "Bắt đầu giải".
+
+            </td>
+
+        </tr>
+
+    `;
+
+
+            document.getElementById(
+                    "resultBox"
+                ).style.display =
+                "none";
+
+
+            document.getElementById(
+                    "treeNodes"
+                ).innerHTML =
+                "";
+
+
+            document.getElementById(
+                    "treeSvg"
+                ).innerHTML =
+                "";
+
+        }
+    </script>
+
+</body>
+
+</html>
+```
